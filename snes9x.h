@@ -458,6 +458,8 @@ struct SSettings
 	int8	StretchScreenshots;
 	bool8	SnapshotScreenshots;
         char    InitialSnapshotFilename[PATH_MAX + 1];
+        int8    AutoSnapshotRate;
+        int8    AutoSnapshotFrames;
 
 	bool8	ApplyCheats;
 	bool8	NoPatch;

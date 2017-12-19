@@ -767,6 +767,16 @@ char * S9xParseArgs (char **argv, int argc)
                                 else
                                         S9xUsage();
                         }
+                        else
+                        if (!strcasecmp(argv[i], "-autosnapshotrate"))
+                        {
+                                if (i + 1 < argc)
+                                {
+                                        Settings.AutoSnapshotRate = atoi(argv[++i]);
+                                }
+                                else
+                                        S9xUsage();
+                        }
 			else
 
 			// PATCH/CHEAT OPTIONS

@@ -201,6 +201,7 @@
 #include "debug.h"
 #include "missing.h"
 #endif
+#include "screenshot.h"
 
 static inline void S9xReschedule (void);
 
@@ -473,6 +474,12 @@ void S9xDoHEventProcessing (void)
 			if (CPU.V_Counter == PPU.ScreenHeight + FIRST_VISIBLE_LINE)	// VBlank starts from V=225(240).
 			{
 				S9xEndScreenRefresh();
+
+                                if (Settings.AutoSnapshotRate && ++Settings.AutoSnapshotFrames==Settings.AutoSnapshotRate)
+                                {
+                                        S9xDoScreenshot(IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight);
+                                        Settings.AutoSnapshotFrames = 0;
+                                }
 
 				CPU.Flags |= SCAN_KEYS_FLAG;
 
