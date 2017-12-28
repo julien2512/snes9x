@@ -193,6 +193,7 @@
 #include "snes9x.h"
 #include "memmap.h"
 #include "cheats.h"
+#include "display.h"
 
 static uint8 S9xGetByteFree (uint32);
 static void S9xSetByteFree (uint8, uint32);
@@ -413,7 +414,7 @@ bool8 S9xLoadCheatFile (const char *filename)
 	fclose(fs);
 
         if (Settings.AutoSnapshotRate)
-                S9xStartMeta("/data/snes9x/roms/metadata");
+                S9xStartMeta(S9xGetFilename(".meta", SCREENSHOT_DIR));
 
 	return (TRUE);
 }

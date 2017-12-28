@@ -203,6 +203,7 @@
 #include "missing.h"
 #endif
 #include "screenshot.h"
+#include "display.h"
 
 static inline void S9xReschedule (void);
 
@@ -480,7 +481,7 @@ void S9xDoHEventProcessing (void)
                                 {
                                         S9xDoScreenshot(IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight);
 
-                                        S9xAppendMeta("/data/snes9x/roms/metadata");
+                                        S9xAppendMeta(S9xGetFilename(".meta", SCREENSHOT_DIR));
 
                                         Settings.AutoSnapshotFrames = 0;
                                 }
