@@ -261,6 +261,7 @@ void S9xDisableCheat (uint32);
 void S9xAddCheat (bool8, bool8, uint32, uint8);
 void S9xInitCheatData (void);
 void S9xInitWatchedAddress (void);
+bool8 S9xAppendMeta (const char *);
 bool8 S9xLoadCheatFile (const char *);
 bool8 S9xSaveCheatFile (const char *);
 

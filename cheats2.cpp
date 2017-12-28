@@ -344,6 +344,50 @@ void S9xApplyCheats (void)
 	}
 }
 
+// higher file descriptors but meta will be writen even if snes9x die
+// TensorFlow Embeddings file format
+bool8 S9xStartMeta(const char *filename)
+{
+        FILE    *fs;
+        fs = fopen(filename, "w+");
+        if (!fs)
+                return (FALSE);
+
+        for(uint32 i=0; i<Cheat.num_cheats; i++)
+        {
+                if (Cheat.c[i].enabled)
+                {
+                        fprintf(fs,(i>0)?"\t%s":"%s", Cheat.c[i].name);
+                }
+        }
+
+        fputc('\n',fs);
+
+        fclose(fs);
+
+        return TRUE;
+}
+
+bool8 S9xAppendMeta(const char *filename)
+{
+        FILE    *fs;
+        fs = fopen(filename, "a");
+        if (!fs)
+                return (FALSE);
+
+        for(uint32 i=0; i<Cheat.num_cheats; i++)
+        {
+                if (Cheat.c[i].enabled)
+                        fprintf(fs,(i>0)?"\t%u":"%u",S9xGetByteFree(Cheat.c[i].address));
+        }
+
+        fputc('\n',fs);
+
+        fclose(fs);
+
+        return (TRUE); 
+}
+
 bool8 S9xLoadCheatFile (const char *filename)
 {
 	FILE	*fs;
@@ -367,6 +411,9 @@ bool8 S9xLoadCheatFile (const char *filename)
 	}
 
 	fclose(fs);
+
+        if (Settings.AutoSnapshotRate)
+                S9xStartMeta("/data/snes9x/roms/metadata");
 
 	return (TRUE);
 }

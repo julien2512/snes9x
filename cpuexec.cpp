@@ -197,6 +197,7 @@
 #include "apu/apu.h"
 #include "fxemu.h"
 #include "snapshot.h"
+#include "cheats.h"
 #ifdef DEBUGGER
 #include "debug.h"
 #include "missing.h"
@@ -478,6 +479,9 @@ void S9xDoHEventProcessing (void)
                                 if (Settings.AutoSnapshotRate && ++Settings.AutoSnapshotFrames==Settings.AutoSnapshotRate)
                                 {
                                         S9xDoScreenshot(IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight);
+
+                                        S9xAppendMeta("/data/snes9x/roms/metadata");
+
                                         Settings.AutoSnapshotFrames = 0;
                                 }
 
