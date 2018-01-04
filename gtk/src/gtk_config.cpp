@@ -256,7 +256,7 @@ Snes9xConfig::load_defaults (void)
     Settings.DynamicRateControl = 1;
     Settings.DynamicRateLimit = 5;
     Settings.HDMATimingHack = 100;
-    Settings.ApplyCheats = 1;
+    Settings.ApplyCheats = 0;
 
 #ifdef NETPLAY_SUPPORT
     Settings.NetPlay = FALSE;
