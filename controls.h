@@ -330,7 +330,8 @@ enum controllers
 	CTL_MOUSE,		// use id1 to specify 0-1
 	CTL_SUPERSCOPE,
 	CTL_JUSTIFIER,	// use id1: 0=one justifier, 1=two justifiers
-	CTL_MP5			// use id1-id4 to specify pad 0-7 (or -1)
+	CTL_MP5,			// use id1-id4 to specify pad 0-7 (or -1)
+        CTL_TENSORFLOW          // use id1 to specify 0-1 ... when it will be implemented
 };
 
 void S9xSetController (int port, enum controllers controller, int8 id1, int8 id2, int8 id3, int8 id4); // port=0-1

@@ -249,6 +249,10 @@ static bool parse_controller_spec (int port, const char *arg)
 										(arg[5] == 'n') ? -1 : arg[5] - '1',
 										(arg[6] == 'n') ? -1 : arg[6] - '1',
 										(arg[7] == 'n') ? -1 : arg[7] - '1');
+        else
+        if (!strncasecmp(arg, "tensorflow", 10) && arg[10] >= '1' && arg[10] <= '2' && arg[4] == '\0')
+                S9xSetController(port, CTL_TENSORFLOW, arg[10] - '1', 0, 0, 0);
+
 	else
 		return (false);
 
@@ -464,6 +468,7 @@ void S9xLoadConfigFiles (char **argv, int argc)
 	Settings.SuperScopeMaster           =  conf.GetBool("Controls::SuperscopeMaster",          true);
 	Settings.JustifierMaster            =  conf.GetBool("Controls::JustifierMaster",           true);
 	Settings.MultiPlayer5Master         =  conf.GetBool("Controls::MP5Master",                 true);
+        Settings.TensorFlowMaster           =  conf.GetBool("Controls::TensorFlowMaster",          true);
 	Settings.UpAndDown                  =  conf.GetBool("Controls::AllowLeftRight",            false);
 
 	if (conf.Exists("Controls::Port1"))
@@ -707,6 +712,9 @@ char * S9xParseArgs (char **argv, int argc)
 			else
 			if (!strcasecmp(argv[i], "-nojustifier"))
 				Settings.JustifierMaster = FALSE;
+                        else
+                        if (!strcasecmp(argv[i], "-notensorflow"))
+                                Settings.TensorFlowMaster = FALSE;
 			else
 			if (!strcasecmp(argv[i], "-port1") ||
 				!strcasecmp(argv[i], "-port2"))

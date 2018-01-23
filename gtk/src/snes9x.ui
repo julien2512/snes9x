@@ -1728,6 +1728,16 @@
                                         <signal name="activate" handler="on_port_activate" swapped="no"/>
                                       </object>
                                     </child>
+                                    <child>
+                                      <object class="GtkRadioMenuItem" id="tensorflow1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">TensorFlow</property>
+                                        <property name="user_underline">True</property>
+                                        <property name="group">joypad1</property>
+                                        <signal name="activate" handler="on_port_activate" swapped="no"/>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1778,6 +1788,16 @@
                                         <property name="label" translatable="yes">Superscope</property>
                                         <property name="use_underline">True</property>
                                         <property name="active">True</property>
+                                        <property name="group">joypad2</property>
+                                        <signal name="activate" handler="on_port_activate" swapped="no"/>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioMenuItem" id="tensorflow2">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">TensorFlow</property>
+                                        <property name="user_underline">True</property>
                                         <property name="group">joypad2</property>
                                         <signal name="activate" handler="on_port_activate" swapped="no"/>
                                       </object>

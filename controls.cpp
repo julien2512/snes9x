@@ -227,7 +227,9 @@ using namespace	std;
 #define SUPERSCOPE				10
 #define ONE_JUSTIFIER			11
 #define TWO_JUSTIFIERS			12
-#define NUMCTLS					13 // This must be LAST
+#define TENSORFLOW0                     13
+#define TENSORFLOW1                     14
+#define NUMCTLS					15 // This must be LAST
 
 #define POLL_ALL				NUMCTLS
 
@@ -716,6 +718,13 @@ void S9xSetController (int port, enum controllers controller, int8 id1, int8 id2
 			mp5[port].pads[3] = (id4 < 0) ? NONE : JOYPAD0 + id4;
 			return;
 
+                case CTL_TENSORFLOW:
+                        if (id1 < 0 || id1 > 1)
+                                break;
+
+                        newcontrollers[port] = TENSORFLOW0 + id1;
+                        return;
+
 		default:
 			fprintf(stderr, "Unknown controller type %d\n", controller);
 			break;
@@ -842,6 +851,26 @@ bool S9xVerifyControllers (void)
 
 				break;
 
+                        case TENSORFLOW0:
+                        case TENSORFLOW1:
+                                if (!Settings.TensorFlowMaster)
+                                {
+                                        S9xMessage(S9X_CONFIG_INFO, S9X_ERROR, "Cannot select SNES Mouse: MouseMaster disabled");
+                                        newcontrollers[port] = NONE;
+                                        ret = true;
+                                        break;
+                                }
+
+                                if (used[i]++ >0)
+                                {
+                                        snprintf(buf, sizeof(buf), "TensorFlow%d used more than once! Disabling extra instances", i - TENSORFLOW0 + 1);
+                                        S9xMessage(S9X_CONFIG_INFO, S9X_ERROR, buf);
+                                        newcontrollers[port] = NONE;
+                                        ret = true;
+                                        break;
+                                }
+                                break;
+
 			default:
 				break;
 		}
@@ -898,6 +927,12 @@ void S9xGetController (int port, enum controllers *controller, int8 *id1, int8 *
 			*controller = CTL_JUSTIFIER;
 			*id1 = i - ONE_JUSTIFIER;
 			return;
+
+                case TENSORFLOW0:
+                case TENSORFLOW1:
+                        *controller = CTL_TENSORFLOW;
+                        *id1 = i - TENSORFLOW0; 
+                        return;
 	}
 }
 
@@ -966,6 +1001,11 @@ void S9xReportControllers (void)
 				else
 					c += sprintf(c, "Blue and Pink Justifiers. ");
 				break;
+
+                        case TENSORFLOW0:
+                        case TENSORFLOW1:
+                                c += sprintf(c, "TensorFlow #%d. ", (int) (newcontrollers[port] - TENSORFLOW0 + 1));
+                                break;        
 		}
 	}
 

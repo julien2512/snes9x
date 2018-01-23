@@ -237,6 +237,7 @@ Snes9xConfig::load_defaults (void)
     Settings.SuperScopeMaster = TRUE;
     Settings.JustifierMaster = TRUE;
     Settings.MultiPlayer5Master = TRUE;
+    Settings.TensorFlowMaster = TRUE;
     Settings.UpAndDown = FALSE;
     Settings.AutoSaveDelay = 0;
     Settings.SkipFrames = AUTO_FRAMERATE;

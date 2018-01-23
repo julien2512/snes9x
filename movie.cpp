@@ -262,7 +262,7 @@ static struct SMovie	Movie;
 
 static uint8	prevPortType[2];
 static int8		prevPortIDs[2][4];
-static bool8	prevMouseMaster, prevSuperScopeMaster, prevJustifierMaster, prevMultiPlayer5Master;
+static bool8	prevMouseMaster, prevSuperScopeMaster, prevJustifierMaster, prevMultiPlayer5Master, prevTensorFlowMaster;
 
 static uint8	Read8 (uint8 *&);
 static uint16	Read16 (uint8 *&);
@@ -346,6 +346,7 @@ static void store_previous_settings (void)
 	prevSuperScopeMaster   = Settings.SuperScopeMaster;
 	prevJustifierMaster    = Settings.JustifierMaster;
 	prevMultiPlayer5Master = Settings.MultiPlayer5Master;
+        prevTensorFlowMaster   = Settings.TensorFlowMaster;
 }
 
 static void restore_previous_settings (void)
@@ -354,6 +355,7 @@ static void restore_previous_settings (void)
 	Settings.SuperScopeMaster   = prevSuperScopeMaster;
 	Settings.JustifierMaster    = prevJustifierMaster;
 	Settings.MultiPlayer5Master = prevMultiPlayer5Master;
+        Settings.TensorFlowMaster   = prevTensorFlowMaster;
 
 	S9xSetController(0, (enum controllers) prevPortType[0], prevPortIDs[0][0], prevPortIDs[0][1], prevPortIDs[0][2], prevPortIDs[0][3]);
 	S9xSetController(1, (enum controllers) prevPortType[1], prevPortIDs[1][0], prevPortIDs[1][1], prevPortIDs[1][2], prevPortIDs[1][3]);
@@ -375,6 +377,7 @@ static void restore_movie_settings (void)
 	Settings.SuperScopeMaster   = (Movie.PortType[0] == CTL_SUPERSCOPE || Movie.PortType[1] == CTL_SUPERSCOPE);
 	Settings.JustifierMaster    = (Movie.PortType[0] == CTL_JUSTIFIER  || Movie.PortType[1] == CTL_JUSTIFIER);
 	Settings.MultiPlayer5Master = (Movie.PortType[0] == CTL_MP5        || Movie.PortType[1] == CTL_MP5);
+        Settings.TensorFlowMaster   = (Movie.PortType[0] == CTL_TENSORFLOW || Movie.PortType[1] == CTL_TENSORFLOW);
 
 	S9xSetController(0, (enum controllers) Movie.PortType[0], Movie.PortIDs[0][0], Movie.PortIDs[0][1], Movie.PortIDs[0][2], Movie.PortIDs[0][3]);
 	S9xSetController(1, (enum controllers) Movie.PortType[1], Movie.PortIDs[1][0], Movie.PortIDs[1][1], Movie.PortIDs[1][2], Movie.PortIDs[1][3]);

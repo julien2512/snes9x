@@ -537,6 +537,16 @@ event_port (GtkWidget *widget, gpointer data)
         S9xSetController (1, CTL_MP5, 1, 2, 3, 4);
     }
 
+    else if (!strcasecmp (name, "tensorflow1"))
+    {
+        S9xSetController (0, CTL_TENSORFLOW, 0, 0, 0, 0);
+    }
+
+    else if (!strcasecmp (name, "tensorflow2"))
+    {
+        S9xSetController (1, CTL_TENSORFLOW, 1, 0, 0, 0);
+    }
+
     return;
 }
 

@@ -1653,6 +1653,7 @@ int main (int argc, char **argv)
 	Settings.SuperScopeMaster = TRUE;
 	Settings.JustifierMaster = TRUE;
 	Settings.MultiPlayer5Master = TRUE;
+        Settings.TensorFlowMaster = TRUE;
 	Settings.FrameTimePAL = 20000;
 	Settings.FrameTimeNTSC = 16667;
 	Settings.SixteenBitSound = TRUE;

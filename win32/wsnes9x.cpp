@@ -768,6 +768,7 @@ void ChangeInputDevice(void)
 	Settings.JustifierMaster = false;
 	Settings.SuperScopeMaster = false;
 	Settings.MultiPlayer5Master = false;
+        Settings.TensorFlowMaster = false;
 
 	switch(GUI.ControllerOption)
 	{

@@ -54,6 +54,7 @@ MouseMaster = TRUE
 SuperscopeMaster = TRUE
 JustifierMaster = TRUE
 MP5Master = TRUE
+TensorFlowMaster = TRUE
 AllowLeftRight = FALSE
 Port1 = pad1
 Port2 = none
