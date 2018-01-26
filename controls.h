@@ -202,6 +202,7 @@
 #define S9xButtonMulti			6
 #define S9xAxisJoypad			7
 #define S9xPointer				8
+#define S9xButtonTensorFlow             9
 
 #define S9xButtonPseudopointer	254
 #define S9xAxisPseudopointer	253
@@ -241,6 +242,13 @@ typedef struct
 				uint8	sticky:1;			// If set, toggle button state (on/turbo or off) when pressed and do nothing on release
 				uint16	buttons;			// Which buttons to actuate. Use SNES_*_MASK constants from snes9x.h
 			}	joypad;
+
+                        struct
+                        {
+                                uint8   idx:1;                          // TensorFlow number 0-1
+
+                                uint16  buttons;                        // Which buttons to actuate. Use SNES_*_MASK constants from snes9x.h
+                        }       tensorflow;
 
 			struct
 			{
@@ -331,7 +339,7 @@ enum controllers
 	CTL_SUPERSCOPE,
 	CTL_JUSTIFIER,	// use id1: 0=one justifier, 1=two justifiers
 	CTL_MP5,			// use id1-id4 to specify pad 0-7 (or -1)
-        CTL_TENSORFLOW          // use id1 to specify 0-1 ... when it will be implemented
+        CTL_TENSORFLOW          // use id1 to specify 0-1 ...
 };
 
 void S9xSetController (int port, enum controllers controller, int8 id1, int8 id2, int8 id3, int8 id4); // port=0-1
@@ -342,6 +350,12 @@ void S9xReportControllers (void);
 // Returns true if something was disabled.
 
 bool S9xVerifyControllers (void);
+
+// Functions for reading TensorFlow's commands
+
+s9xcommand_t S9xReadTensorFlowCommand(const char *filename);
+void S9xApplyTensorFlowCommand(uint32 id, s9xcommand_t command);
+void S9xReadTensorFlowCommand(uint32 id, const char *filename);
 
 // Functions for translation s9xcommand_t's into strings, and vice versa.
 // free() the returned string after you're done with it.
@@ -460,7 +474,7 @@ struct SControlSnapshot
 	uint8	justifier_select;
 	uint8	dummy3[8];
 	bool8	pad_read, pad_read_last;
-	uint8	internal[60];				// yes, we need to save this!
+	uint8	internal[64];				// yes, we need to save this!
 };
 
 void S9xControlPreSaveState (struct SControlSnapshot *s);

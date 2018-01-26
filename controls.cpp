@@ -291,6 +291,11 @@ static struct
 
 static struct
 {
+        uint16                          buttons;
+}       tensorflow[2];
+
+static struct
+{
 	uint8				delta_x, delta_y;
 	int16				old_x, old_y;
 	int16				cur_x, cur_y;
@@ -529,6 +534,7 @@ static int maptype (int t)
 		case S9xButtonMouse:
 		case S9xButtonSuperscope:
 		case S9xButtonJustifier:
+                case S9xButtonTensorFlow:
 		case S9xButtonCommand:
 		case S9xButtonPseudopointer:
 		case S9xButtonPort:
@@ -601,6 +607,8 @@ void S9xUnmapAllControls (void)
 
 	for (int i = 0; i < 2; i++)
 	{
+                tensorflow[i].buttons = 0;
+
 		mouse[i].old_x = mouse[i].old_y = 0;
 		mouse[i].cur_x = mouse[i].cur_y = 0;
 		mouse[i].buttons = 1;
@@ -855,7 +863,7 @@ bool S9xVerifyControllers (void)
                         case TENSORFLOW1:
                                 if (!Settings.TensorFlowMaster)
                                 {
-                                        S9xMessage(S9X_CONFIG_INFO, S9X_ERROR, "Cannot select SNES Mouse: MouseMaster disabled");
+                                        S9xMessage(S9X_CONFIG_INFO, S9X_ERROR, "Cannot select TensorFlow: TensorFlowMaster disabled");
                                         newcontrollers[port] = NONE;
                                         ret = true;
                                         break;
@@ -1048,6 +1056,31 @@ char * S9xGetCommandName (s9xcommand_t command)
 			if (command.button.joypad.buttons & SNES_SELECT_MASK)	{ s += c; s += "Select"; c = '+'; }
 
 			break;
+
+                case S9xButtonTensorFlow:
+                        if (command.button.tensorflow.buttons == 0)
+                                return (strdup("None"));
+                        if (command.button.tensorflow.buttons & 0x000f)
+                                return (strdup("None"));
+
+                        s = "TensorFlow";
+                        s += command.button.tensorflow.idx + 1;
+
+                        c = ' ';
+                        if (command.button.joypad.buttons & SNES_UP_MASK    )   { s += c; s += "Up";     c = '+'; }
+                        if (command.button.joypad.buttons & SNES_DOWN_MASK  )   { s += c; s += "Down";   c = '+'; }
+                        if (command.button.joypad.buttons & SNES_LEFT_MASK  )   { s += c; s += "Left";   c = '+'; }
+                        if (command.button.joypad.buttons & SNES_RIGHT_MASK )   { s += c; s += "Right";  c = '+'; }
+                        if (command.button.joypad.buttons & SNES_A_MASK     )   { s += c; s += "A";      c = '+'; }
+                        if (command.button.joypad.buttons & SNES_B_MASK     )   { s += c; s += "B";      c = '+'; }
+                        if (command.button.joypad.buttons & SNES_X_MASK     )   { s += c; s += "X";      c = '+'; }
+                        if (command.button.joypad.buttons & SNES_Y_MASK     )   { s += c; s += "Y";      c = '+'; }
+                        if (command.button.joypad.buttons & SNES_TL_MASK    )   { s += c; s += "L";      c = '+'; }
+                        if (command.button.joypad.buttons & SNES_TR_MASK    )   { s += c; s += "R";      c = '+'; }
+                        //if (command.button.joypad.buttons & SNES_START_MASK )   { s += c; s += "Start";  c = '+'; } // may be later
+                        //if (command.button.joypad.buttons & SNES_SELECT_MASK)   { s += c; s += "Select"; c = '+'; } // may be later
+
+                        break;
 
 		case S9xButtonMouse:
 			if (!command.button.mouse.left && !command.button.mouse.right)
@@ -1389,6 +1422,38 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			cmd.type = S9xButtonJoypad;
 		}
 	}
+        else
+        if (!strncmp(name, "TensorFlow", 10))
+        {
+                if (name[10] < '1' || name[10] > '2' || name[11] != ' ')
+                        return (cmd);
+
+                cmd.button.tensorflow.idx = name[10] - '1';
+                s = name + 12;
+                i = 0;
+
+                if (!strncmp(s, "Up",     2))   { i |= SNES_UP_MASK;     s += 2; if (*s == '+') s++; }
+                if (!strncmp(s, "Down",   4))   { i |= SNES_DOWN_MASK;   s += 4; if (*s == '+') s++; }
+                if (!strncmp(s, "Left",   4))   { i |= SNES_LEFT_MASK;   s += 4; if (*s == '+') s++; }
+                if (!strncmp(s, "Right",  5))   { i |= SNES_RIGHT_MASK;  s += 5; if (*s == '+') s++; }
+
+                if (*s == 'A')  { i |= SNES_A_MASK;  s++; if (*s == '+') s++; }
+                if (*s == 'B')  { i |= SNES_B_MASK;  s++; if (*s == '+') s++; }
+                if (*s == 'X')  { i |= SNES_X_MASK;  s++; if (*s == '+') s++; }
+                if (*s == 'Y')  { i |= SNES_Y_MASK;  s++; if (*s == '+') s++; }
+                if (*s == 'L')  { i |= SNES_TL_MASK; s++; if (*s == '+') s++; }
+                if (*s == 'R')  { i |= SNES_TR_MASK; s++; if (*s == '+') s++; }
+
+                //if (!strncmp(s, "Start",  5))   { i |= SNES_START_MASK;  s += 5; if (*s == '+') s++; }   // may be later
+                //if (!strncmp(s, "Select", 6))   { i |= SNES_SELECT_MASK; s += 6; }                       // may be later
+
+                if (i == 0 || *s != 0 || *(s - 1) == '+')
+                        return (cmd);
+
+                cmd.button.joypad.buttons = i;
+
+                cmd.type = S9xButtonTensorFlow; 
+        }
 	else
 	if (!strncmp(name, "Mouse", 5))
 	{
@@ -1811,6 +1876,10 @@ bool S9xMapButton (uint32 id, s9xcommand_t mapping, bool poll)
 					t = MOUSE0 + mapping.button.mouse.idx;
 					break;
 
+                                case S9xButtonTensorFlow:
+                                        t = TENSORFLOW0 + mapping.button.tensorflow.idx;
+                                        break;
+
 				case S9xButtonSuperscope:
 					t = SUPERSCOPE;
 					break;
@@ -2168,6 +2237,48 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 			}
 
 			return;
+
+                case S9xButtonTensorFlow:
+                        uint16  r;
+
+                        r = cmd.button.tensorflow.buttons;
+
+                        if (data1)
+                        {
+                                if (!Settings.UpAndDown && !S9xMoviePlaying()) // if up+down isn't allowed AND we are NOT playing a movie,
+                                {
+                                         if (cmd.button.tensorflow.buttons & (SNES_LEFT_MASK | SNES_RIGHT_MASK))
+                                         {
+                                                        // if we're pressing left or right, then unpress and unturbo them both first
+                                                        // so we don't end up hittnig left AND right accidentally.
+                                                        // Note though that the user can still do it on purpose, if Settings.UpAndDown = true.
+                                                        // This is a feature, look up glitches in tLoZ:aLttP to find out why.
+                                                        tensorflow[cmd.button.tensorflow.idx].buttons &= ~(SNES_LEFT_MASK | SNES_RIGHT_MASK);
+                                                        // but it is not used for now by tensorflow
+                                                        //tensorflow[cmd.button.tensorflow.idx].turbos  &= ~(SNES_LEFT_MASK | SNES_RIGHT_MASK);
+                                                }
+
+                                                if (cmd.button.tensorflow.buttons & (SNES_UP_MASK | SNES_DOWN_MASK))
+                                                {
+                                                        // and ditto for up/down
+                                                        tensorflow[cmd.button.tensorflow.idx].buttons &= ~(SNES_UP_MASK | SNES_DOWN_MASK);
+                                                        //tensorflow[cmd.button.tensorflow.idx].turbos  &= ~(SNES_UP_MASK | SNES_DOWN_MASK);
+                                         }
+                                }
+
+                                tensorflow[cmd.button.tensorflow.idx].buttons |= r;
+                                //tensorflow[cmd.button.tensorflow.idx].turbos  |= t;
+                                //tensorflow[cmd.button.tensorflow.idx].buttons ^= s;
+                                //tensorflow[cmd.button.tensorflow.idx].buttons &= ~(tensorflow[cmd.button.tensorflow.idx].turbos & st);
+                                //tensorflow[cmd.button.tensorflow.idx].turbos  ^= st;
+                        }
+                        else
+                        {
+                                tensorflow[cmd.button.tensorflow.idx].buttons &= ~r;
+                                //tensorflow[cmd.button.tensorflow.idx].buttons &= ~(tensorflow[cmd.button.tensorflow.idx].turbos & t);
+                                //tensorflow[cmd.button.tensorflow.idx].turbos  &= ~t;
+                        }
+                        return;
 
 		case S9xButtonMouse:
 			i = 0;
@@ -2942,6 +3053,17 @@ void S9xSetJoypadLatch (bool latch)
 					do_polling(i);
 					break;
 
+                                case TENSORFLOW0:
+                                case TENSORFLOW1:
+                                        // There is no polling for tensorflow as buttons are read from a file
+                                        //do_polling(i);
+                                        // We need to load buttons from file instead
+                                        if (n==0)
+                                                 S9xReadTensorFlowCommand(1, S9xGetFilename(".tf1", SCREENSHOT_DIR));
+                                        else
+                                                 S9xReadTensorFlowCommand(2, S9xGetFilename(".tf2", SCREENSHOT_DIR));
+                                        break;
+
 				case MOUSE0:
 				case MOUSE1:
 					do_polling(i);
@@ -3016,6 +3138,10 @@ uint8 S9xReadJOYSERn (int n)
 			case JOYPAD7:
 				return (bits | ((joypad[i - JOYPAD0].buttons & 0x8000) ? 1 : 0));
 
+                        case TENSORFLOW0:
+                        case TENSORFLOW1:
+                                return (bits | ((tensorflow[i - TENSORFLOW0].buttons & 0x8000) ? 1 : 0));
+
 			case MOUSE0:
 			case MOUSE1:
 				mouse[i - MOUSE0].buttons += 0x10;
@@ -3069,6 +3195,16 @@ uint8 S9xReadJOYSERn (int n)
 				}
 				else
 					return (bits | ((joypad[i - JOYPAD0].buttons & (0x8000 >> read_idx[n][0]++)) ? 1 : 0));
+
+                        case TENSORFLOW0:
+                        case TENSORFLOW1:
+                                if (read_idx[n][0] >= 16)
+                                {
+                                        read_idx[n][0]++;
+                                        return (bits | 1);
+                                }
+                                else
+                                        return (bits | ((tensorflow[i - TENSORFLOW0].buttons & (0x8000 >> read_idx[n][0]++)) ? 1 : 0));
 
 			case MOUSE0:
 			case MOUSE1:
@@ -3171,6 +3307,13 @@ void S9xDoAutoJoypad (void)
 				WRITE_WORD(Memory.FillRAM + 0x421c + n * 2, 0);
 				break;
 
+                        case TENSORFLOW0:
+                        case TENSORFLOW1:
+                                read_idx[n][0] = 16;
+                                WRITE_WORD(Memory.FillRAM + 0x4218 + n * 2, tensorflow[i - TENSORFLOW0].buttons);
+                                WRITE_WORD(Memory.FillRAM + 0x421c + n * 2, 0);
+                                break;
+
 			case MOUSE0:
 			case MOUSE1:
 				read_idx[n][0] = 16;
@@ -3243,6 +3386,16 @@ void S9xControlEOF (void)
 				}
 
 				break;
+
+                        case TENSORFLOW0:
+                        case TENSORFLOW1:
+                                //if (++tensorflow[i - TENSORFLOW0].turbo_ct >= turbo_time)
+                                //{
+                                //        tensorflow[i - TENSORFLOW0].turbo_ct = 0;
+                                //        tensorflow[i - TENSORFLOW0].buttons ^= tensorflow[i - TENSORFLOW0].turbos;
+                                //}
+
+                                break;
 
 			case MOUSE0:
 			case MOUSE1:
@@ -3526,6 +3679,9 @@ void S9xControlPreSaveState (struct SControlSnapshot *s)
 	for (int j = 0; j < 8; j++)
 		COPY(joypad[j].buttons);
 
+        for (int j = 0; j < 2; j++)
+                COPY(tensorflow[j].buttons);
+
 	for (int j = 0; j < 2; j++)
 	{
 		COPY(mouse[j].delta_x);
@@ -3598,6 +3754,9 @@ void S9xControlPostLoadState (struct SControlSnapshot *s)
 		for (int j = 0; j < 8; j++)
 			COPY(joypad[j].buttons);
 
+                for (int j = 0; j < 2; j++)
+                        COPY(tensorflow[j].buttons);
+
 		for (int j = 0; j < 2; j++)
 		{
 			COPY(mouse[j].delta_x);
@@ -3652,6 +3811,22 @@ void MovieSetJoypad (int i, uint16 buttons)
 		return;
 
 	joypad[i].buttons = buttons;
+}
+
+uint16 MovieGetTensorFlow (int i)
+{
+        if (i < 0 || i > 1)
+                return (0);
+
+        return (tensorflow[i].buttons);
+}
+
+void MovieSetTensorFlow (int i, uint16 buttons)
+{
+        if (i < 0 || i > 1)
+                return;
+
+        tensorflow[i].buttons = buttons;
 }
 
 bool MovieGetMouse (int i, uint8 out[5])
@@ -3745,4 +3920,31 @@ void MovieSetJustifier (int i, uint8 in[11])
 	justifier.buttons      = *ptr++;
 	justifier.offscreen[0] = *ptr++;
 	justifier.offscreen[1] = *ptr;
+}
+
+s9xcommand_t S9xReadTensorFlowCommand(const char *filename)
+{
+        FILE    *fs;
+        char     str[28];
+
+        fs = fopen(filename, "r");
+        if (!fs)
+                return S9xGetCommandT("");
+
+        fgets(str, 28, fs);
+
+        fclose(fs);
+
+        str[strlen(str)-1] = 0;
+
+        return S9xGetCommandT(str);
+}
+
+void S9xReadTensorFlowCommand(uint32 id, const char *filename)
+{
+        s9xcommand_t    cmd;
+
+        cmd = S9xReadTensorFlowCommand(filename);
+
+        MovieSetTensorFlow(id - 1, cmd.button.tensorflow.buttons);
 }

@@ -204,6 +204,7 @@
 #endif
 #include "screenshot.h"
 #include "display.h"
+#include "controls.h"
 
 static inline void S9xReschedule (void);
 

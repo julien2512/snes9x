@@ -257,6 +257,8 @@ uint32 S9xMovieGetFrameCounter (void);
 
 uint16 MovieGetJoypad (int);
 void MovieSetJoypad (int, uint16);
+uint16 MovieGetTensorFlow (int);
+void MovieSetTensorFlow (int, uint16);
 bool MovieGetMouse (int, uint8 d[MOUSE_DATA_SIZE]);
 void MovieSetMouse (int, uint8 d[MOUSE_DATA_SIZE], bool);
 bool MovieGetScope (int, uint8 d[SCOPE_DATA_SIZE]);

@@ -2081,6 +2081,21 @@ static void DisplayPressedKeys (void)
 				break;
 			}
 
+                        case CTL_TENSORFLOW:
+                        {
+                                sprintf(string, "#%d %d:                  ", port, ids[0]);
+                                uint16 pad = MovieGetTensorFlow(ids[0]);
+                                for (int i = 0; i < 15; i++)
+                                {
+                                        int j = KeyOrder[i];
+                                        int mask = (1 << (j + 1));
+                                        string[6 + i]= (pad & mask) ? KeyMap[j] : ' ';
+                                }
+
+                                S9xDisplayString(string, line++, 1, false);
+                                break;
+                        }
+
 			case CTL_SUPERSCOPE:
 			{
 				uint8 buf[6], *p = buf;
