@@ -442,6 +442,24 @@ void S9xEndScreenRefresh (void)
 
 			S9xControlEOF();
 
+                        if (Settings.AutoSnapshotRate && ++Settings.AutoSnapshotFrames==Settings.AutoSnapshotRate)
+                        {
+                                Settings.TakeScreenshot = 1;
+                                S9xAppendMeta(S9xGetFilename(".meta", SCREENSHOT_DIR));
+                                Settings.AutoSnapshotFrames = 0;
+                        }
+
+                        if (Settings.KillAfterXFrames && Settings.TakeScreenshot)
+                        {
+                                IPPU.UnkilledFrames++;
+
+                                if (IPPU.UnkilledFrames >= Settings.KillAfterXFrames)
+                                {
+                                        IPPU.UnkilledFrames = 0;
+                                        S9xExit();
+                                }
+                        }
+
 			if (Settings.TakeScreenshot)
 				S9xDoScreenshot(IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight);
 
