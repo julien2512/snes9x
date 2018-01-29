@@ -654,6 +654,17 @@ S9xSyncSpeed (void)
         }
     }
 
+    if (IPPU.RenderThisFrame == 1 && Settings.KillAfterXFrames)
+    {
+        IPPU.UnkilledFrames++;
+
+        if (IPPU.UnkilledFrames >= Settings.KillAfterXFrames)
+        {
+            IPPU.UnkilledFrames = 0;
+            S9xExit();
+        }
+    }
+
     syncing = 1;
 
     return;

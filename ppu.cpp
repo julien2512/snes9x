@@ -2001,6 +2001,7 @@ void S9xSoftResetPPU (void)
 	IPPU.DisplayedRenderedFrameCount = 0;
 	IPPU.SkippedFrames = 0;
 	IPPU.FrameSkip = 0;
+        IPPU.UnkilledFrames = 0;
 
 	S9xFixColourBrightness();
 

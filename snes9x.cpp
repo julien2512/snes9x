@@ -446,6 +446,7 @@ void S9xLoadConfigFiles (char **argv, int argc)
 	Settings.BSXBootup                  =  conf.GetBool("Settings::BSXBootup",                 false);
 	Settings.TurboMode                  =  conf.GetBool("Settings::TurboMode",                 false);
 	Settings.TurboSkipFrames            =  conf.GetUInt("Settings::TurboFrameSkip",            15);
+        Settings.KillAfterXFrames           =  conf.GetUInt("Settings::KillAfterXFrames",          0);
 	Settings.MovieTruncate              =  conf.GetBool("Settings::MovieTruncateAtEnd",        false);
 	Settings.MovieNotifyIgnored         =  conf.GetBool("Settings::MovieNotifyIgnored",        false);
 	Settings.WrongMovieStateProtection  =  conf.GetBool("Settings::WrongMovieStateProtection", true);
@@ -918,6 +919,14 @@ char * S9xParseArgs (char **argv, int argc)
 				else
 					S9xUsage();
 			}
+                        else
+                        if (!strcasecmp(argv[i], "-killafterxframes"))
+                        {
+                                if (i + 1 < argc)
+                                        Settings.KillAfterXFrames = atoi(argv[++i]) + 1;
+                                else
+                                        S9xUsage();
+                        }
 			else
 			if (!strcasecmp(argv[i], "-frametime"))
 			{

@@ -241,6 +241,7 @@ Snes9xConfig::load_defaults (void)
     Settings.UpAndDown = FALSE;
     Settings.AutoSaveDelay = 0;
     Settings.SkipFrames = AUTO_FRAMERATE;
+    Settings.KillAfterXFrames = 0;
     Settings.Transparency = TRUE;
     Settings.DisplayFrameRate = FALSE;
     Settings.SixteenBitSound = TRUE;
@@ -412,6 +413,7 @@ Snes9xConfig::save_config_file (void)
     xml_out_int (xml, "transparency", Settings.Transparency);
     xml_out_int (xml, "show_frame_rate", Settings.DisplayFrameRate);
     xml_out_int (xml, "frameskip", Settings.SkipFrames);
+    xml_out_int (xml, "killafterxframes", Settings.KillAfterXFrames);
     xml_out_int (xml, "save_sram_after_secs", Settings.AutoSaveDelay);
     xml_out_int (xml, "16bit_sound", Settings.SixteenBitSound);
     xml_out_int (xml, "stereo", Settings.Stereo);

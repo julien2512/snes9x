@@ -440,6 +440,7 @@ struct SSettings
 	uint32	SkipFrames;
 	uint32	TurboSkipFrames;
 	uint32	AutoMaxSkipFrames;
+        uint32  KillAfterXFrames;
 	bool8	TurboMode;
 	uint32	HighSpeedSeek;
 	bool8	FrameAdvance;
