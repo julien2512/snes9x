@@ -563,6 +563,7 @@ void S9xUsage (void)
 	S9xMessage(S9X_INFO, S9X_USAGE, "    Controllers: none              No controller");
 	S9xMessage(S9X_INFO, S9X_USAGE, "                 pad#              Joypad number 1-8");
 	S9xMessage(S9X_INFO, S9X_USAGE, "                 mouse#            Mouse number 1-2");
+        S9xMessage(S9X_INFO, S9X_USAGE, "                 tensorflow#       TensorFlow number 1-2");
 	S9xMessage(S9X_INFO, S9X_USAGE, "                 superscope        Superscope (not useful with -port1)");
 	S9xMessage(S9X_INFO, S9X_USAGE, "                 justifier         Blue Justifier (not useful with -port1)");
 	S9xMessage(S9X_INFO, S9X_USAGE, "                 two-justifiers    Blue & Pink Justifiers");
