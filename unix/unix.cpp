@@ -538,6 +538,17 @@ void S9xParseArg (char **argv, int &i, int argc)
 		else
 			S9xUsage();
 	}
+        else
+        if (!strcasecmp(argv[i], "-savestateattheendfilename"))
+        {
+                if (i + 1 < argc)
+                {
+                        strncpy(Settings.SaveStateAtTheEndFilename, argv[++i], PATH_MAX);
+                        Settings.SaveStateAtTheEndFilename[PATH_MAX] = 0;
+                }
+                else
+                        S9xUsage();
+        }
 	else
 	if (!strcasecmp(argv[i], "-playmovie"))
 	{

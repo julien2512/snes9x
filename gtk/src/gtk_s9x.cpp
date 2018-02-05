@@ -128,7 +128,7 @@ main (int argc, char *argv[])
 
     gtk_window_present (top_level->get_window ());
 
-    if (rom_filename && Settings.InitialSnapshotFilename)
+    if (rom_filename && *Settings.InitialSnapshotFilename!='\0')
         S9xUnfreezeGame(Settings.InitialSnapshotFilename);
 
     gtk_main ();
@@ -371,6 +371,23 @@ S9xIdleFunc (gpointer data)
     else if(IPPU.TotalEmulatedFrames % gui_config->rewind_granularity == 0)
         stateMan.push();
 
+    if (Settings.KillAfterXFrames)
+    {
+        IPPU.UnkilledFrames++;
+
+        if (IPPU.UnkilledFrames == Settings.KillAfterXFrames)
+        {
+              IPPU.UnkilledFrames = 0;
+
+              if (*Settings.SaveStateAtTheEndFilename!='\0')
+              {
+                    S9xFreezeGame (Settings.SaveStateAtTheEndFilename);
+              }
+
+              S9xExit();
+        }
+    }
+
     static int muted_from_turbo = FALSE;
     static int mute_saved_state = FALSE;
 
@@ -413,9 +430,9 @@ S9xScreenSaverCheckFunc (gpointer data)
 void
 S9xMessage (int type, int number, const char *message)
 {
-    /*
+    
     fprintf (stderr, "%s\n", message);
-     */
+     
     return;
 }
 

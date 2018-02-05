@@ -462,6 +462,7 @@ struct SSettings
         char    InitialSnapshotFilename[PATH_MAX + 1];
         int8    AutoSnapshotRate;
         int8    AutoSnapshotFrames;
+        char    SaveStateAtTheEndFilename[PATH_MAX + 1];
 
 	bool8	ApplyCheats;
 	bool8	NoPatch;

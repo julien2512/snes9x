@@ -1067,18 +1067,18 @@ char * S9xGetCommandName (s9xcommand_t command)
                         s += command.button.tensorflow.idx + 1;
 
                         c = ' ';
-                        if (command.button.joypad.buttons & SNES_UP_MASK    )   { s += c; s += "Up";     c = '+'; }
-                        if (command.button.joypad.buttons & SNES_DOWN_MASK  )   { s += c; s += "Down";   c = '+'; }
-                        if (command.button.joypad.buttons & SNES_LEFT_MASK  )   { s += c; s += "Left";   c = '+'; }
-                        if (command.button.joypad.buttons & SNES_RIGHT_MASK )   { s += c; s += "Right";  c = '+'; }
-                        if (command.button.joypad.buttons & SNES_A_MASK     )   { s += c; s += "A";      c = '+'; }
-                        if (command.button.joypad.buttons & SNES_B_MASK     )   { s += c; s += "B";      c = '+'; }
-                        if (command.button.joypad.buttons & SNES_X_MASK     )   { s += c; s += "X";      c = '+'; }
-                        if (command.button.joypad.buttons & SNES_Y_MASK     )   { s += c; s += "Y";      c = '+'; }
-                        if (command.button.joypad.buttons & SNES_TL_MASK    )   { s += c; s += "L";      c = '+'; }
-                        if (command.button.joypad.buttons & SNES_TR_MASK    )   { s += c; s += "R";      c = '+'; }
-                        //if (command.button.joypad.buttons & SNES_START_MASK )   { s += c; s += "Start";  c = '+'; } // may be later
-                        //if (command.button.joypad.buttons & SNES_SELECT_MASK)   { s += c; s += "Select"; c = '+'; } // may be later
+                        if (command.button.tensorflow.buttons & SNES_UP_MASK    )   { s += c; s += "Up";     c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_DOWN_MASK  )   { s += c; s += "Down";   c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_LEFT_MASK  )   { s += c; s += "Left";   c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_RIGHT_MASK )   { s += c; s += "Right";  c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_A_MASK     )   { s += c; s += "A";      c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_B_MASK     )   { s += c; s += "B";      c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_X_MASK     )   { s += c; s += "X";      c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_Y_MASK     )   { s += c; s += "Y";      c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_TL_MASK    )   { s += c; s += "L";      c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_TR_MASK    )   { s += c; s += "R";      c = '+'; }
+                        //if (command.button.tensorflow.buttons & SNES_START_MASK )   { s += c; s += "Start";  c = '+'; } // may be later
+                        //if (command.button.tensorflow.buttons & SNES_SELECT_MASK)   { s += c; s += "Select"; c = '+'; } // may be later
 
                         break;
 
@@ -1450,7 +1450,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
                 if (i == 0 || *s != 0 || *(s - 1) == '+')
                         return (cmd);
 
-                cmd.button.joypad.buttons = i;
+                cmd.button.tensorflow.buttons = i;
 
                 cmd.type = S9xButtonTensorFlow; 
         }
@@ -3058,6 +3058,7 @@ void S9xSetJoypadLatch (bool latch)
                                         // There is no polling for tensorflow as buttons are read from a file
                                         //do_polling(i);
                                         // We need to load buttons from file instead
+
                                         if (n==0)
                                                  S9xReadTensorFlowCommand(1, S9xGetFilename(".tf1", SCREENSHOT_DIR));
                                         else
@@ -3679,8 +3680,8 @@ void S9xControlPreSaveState (struct SControlSnapshot *s)
 	for (int j = 0; j < 8; j++)
 		COPY(joypad[j].buttons);
 
-        for (int j = 0; j < 2; j++)
-                COPY(tensorflow[j].buttons);
+//        for (int j = 0; j < 2; j++)
+//                COPY(tensorflow[j].buttons);
 
 	for (int j = 0; j < 2; j++)
 	{
@@ -3754,8 +3755,8 @@ void S9xControlPostLoadState (struct SControlSnapshot *s)
 		for (int j = 0; j < 8; j++)
 			COPY(joypad[j].buttons);
 
-                for (int j = 0; j < 2; j++)
-                        COPY(tensorflow[j].buttons);
+//                for (int j = 0; j < 2; j++)
+//                        COPY(tensorflow[j].buttons);
 
 		for (int j = 0; j < 2; j++)
 		{

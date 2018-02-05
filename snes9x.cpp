@@ -250,7 +250,7 @@ static bool parse_controller_spec (int port, const char *arg)
 										(arg[6] == 'n') ? -1 : arg[6] - '1',
 										(arg[7] == 'n') ? -1 : arg[7] - '1');
         else
-        if (!strncasecmp(arg, "tensorflow", 10) && arg[10] >= '1' && arg[10] <= '2' && arg[4] == '\0')
+        if (!strncasecmp(arg, "tensorflow", 10) && arg[10] >= '1' && arg[10] <= '2' && arg[11] == '\0')
                 S9xSetController(port, CTL_TENSORFLOW, arg[10] - '1', 0, 0, 0);
 
 	else
@@ -454,6 +454,13 @@ void S9xLoadConfigFiles (char **argv, int argc)
 	Settings.SnapshotScreenshots        =  conf.GetBool("Settings::SnapshotScreenshots",       true);
 	Settings.DontSaveOopsSnapshot       =  conf.GetBool("Settings::DontSaveOopsSnapshot",      false);
 	Settings.AutoSaveDelay              =  conf.GetUInt("Settings::AutoSaveDelay",             0);
+        Settings.AutoSnapshotRate           =  conf.GetUInt("Settings::AutoSnapshotRate",          0);
+        Settings.SaveStateAtTheEndFilename[0] = '\0';
+        if (conf.Exists("Settings::SaveStateAtTheEndFilename"))
+                conf.GetString("Settings::SaveStateAtTheEndFilename", Settings.SaveStateAtTheEndFilename, PATH_MAX);
+        Settings.InitialSnapshotFilename[0]   = '\0';
+        if (conf.Exists("Settings::InitialSnapshotFilename"))
+                conf.GetString("Settings::InitialSnapshotFilename", Settings.InitialSnapshotFilename, 128);
 
 	if (conf.Exists("Settings::FrameTime"))
 		Settings.FrameTimePAL = Settings.FrameTimeNTSC = conf.GetUInt("Settings::FrameTime", 16667);
@@ -585,7 +592,11 @@ void S9xUsage (void)
 	S9xMessage(S9X_INFO, S9X_USAGE, "                                copier");
 	S9xMessage(S9X_INFO, S9X_USAGE, "-header                         Assume the ROM image has a header of a copier");
 	S9xMessage(S9X_INFO, S9X_USAGE, "-bsxbootup                      Boot up BS games from BS-X");
-	S9xMessage(S9X_INFO, S9X_USAGE, "");
+        S9xMessage(S9X_INFO, S9X_USAGE, "-snapshot                       Initial State Loading file name");
+        S9xMessage(S9X_INFO, S9X_USAGE, "-savestateattheendfilename      Final State Saving file name");
+	S9xMessage(S9X_INFO, S9X_USAGE, "-autosnapshotrate               Frame rate for saving auto snapshot images");
+        S9xMessage(S9X_INFO, S9X_USAGE, "-killafterxframes               End Snes9x after X frames");
+        S9xMessage(S9X_INFO, S9X_USAGE, "");
 
 	// PATCH/CHEAT OPTIONS
 	S9xMessage(S9X_INFO, S9X_USAGE, "-nopatch                        Do not apply any available IPS/UPS patches");
@@ -783,6 +794,17 @@ char * S9xParseArgs (char **argv, int argc)
                                 if (i + 1 < argc)
                                 {
                                         Settings.AutoSnapshotRate = atoi(argv[++i]);
+                                }
+                                else
+                                        S9xUsage();
+                        }
+                        else
+                        if (!strcasecmp(argv[i], "-savestateattheendfilename"))
+                        {
+                                if (i + 1 < argc)
+                                {
+                                        strncpy(Settings.SaveStateAtTheEndFilename, argv[++i], PATH_MAX);
+                                        Settings.SaveStateAtTheEndFilename[PATH_MAX] = 0;
                                 }
                                 else
                                         S9xUsage();

@@ -316,7 +316,7 @@ bool8 S9xDoScreenshot (int width, int height)
 
 	fclose(fp);
 
-	fprintf(stderr, "%s saved.\n", fname);
+        fprintf(stderr, "%s saved.\n", fname);
 
 	const char	*base = S9xBasename(fname);
 	sprintf(String, "Saved screenshot %s", base);

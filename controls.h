@@ -474,7 +474,7 @@ struct SControlSnapshot
 	uint8	justifier_select;
 	uint8	dummy3[8];
 	bool8	pad_read, pad_read_last;
-	uint8	internal[64];				// yes, we need to save this!
+	uint8	internal[60];				// yes, we need to save this!
 };
 
 void S9xControlPreSaveState (struct SControlSnapshot *s);

@@ -202,8 +202,6 @@
 #include "debug.h"
 #include "missing.h"
 #endif
-//#include "screenshot.h"
-//#include "display.h"
 #include "controls.h"
 
 static inline void S9xReschedule (void);
@@ -476,7 +474,7 @@ void S9xDoHEventProcessing (void)
 
 			if (CPU.V_Counter == PPU.ScreenHeight + FIRST_VISIBLE_LINE)	// VBlank starts from V=225(240).
 			{
-				S9xEndScreenRefresh();
+                                S9xEndScreenRefresh();
 
 				CPU.Flags |= SCAN_KEYS_FLAG;
 
@@ -514,13 +512,12 @@ void S9xDoHEventProcessing (void)
 					CPU.NMILine = TRUE;
 					Timings.NMITriggerPos = 6 + 6;
 				}
-
 			}
 
 			if (CPU.V_Counter == PPU.ScreenHeight + 3)	// FIXME: not true
 			{
 				if (Memory.FillRAM[0x4200] & 1)
-					S9xDoAutoJoypad();
+                                        S9xDoAutoJoypad();
 			}
 
 			if (CPU.V_Counter == FIRST_VISIBLE_LINE)	// V=1
