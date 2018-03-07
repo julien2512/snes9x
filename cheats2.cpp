@@ -378,7 +378,7 @@ bool8 S9xAppendMeta(const char *filename)
 
         for(uint32 i=0; i<Cheat.num_cheats; i++)
         {
-                if (Cheat.c[i].enabled)
+                //if (Cheat.c[i].enabled) // if they are enable it'll be not able to play !
                         fprintf(fs,(i>0)?"\t%u":"%u",S9xGetByteFree(Cheat.c[i].address));
         }
 
