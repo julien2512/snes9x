@@ -356,7 +356,7 @@ bool8 S9xStartMeta(const char *filename)
 
         for(uint32 i=0; i<Cheat.num_cheats; i++)
         {
-                if (Cheat.c[i].enabled)
+                //if (Cheat.c[i].enabled) // if they are enable it'll be not able to play !
                 {
                         fprintf(fs,(i>0)?"\t%s":"%s", Cheat.c[i].name);
                 }
