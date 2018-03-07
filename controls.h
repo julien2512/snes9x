@@ -353,9 +353,10 @@ bool S9xVerifyControllers (void);
 
 // Functions for reading TensorFlow's commands
 
-s9xcommand_t S9xReadTensorFlowCommand(const char *filename);
-void S9xApplyTensorFlowCommand(uint32 id, s9xcommand_t command);
-void S9xReadTensorFlowCommand(uint32 id, const char *filename);
+void S9xNextTensorFlowCommand(uint32 id);
+void S9xReadTensorFlowCommand(uint32 id);
+uint16 *S9xReadTensorFlowCommands(const char *filename);
+void S9xInitTensorFlowCommands(uint32 id, const char *filename);
 
 // Functions for translation s9xcommand_t's into strings, and vice versa.
 // free() the returned string after you're done with it.

@@ -292,6 +292,9 @@ static struct
 static struct
 {
         uint16                          buttons;
+        uint8                           currentcommand;
+        uint8                           maxcommands;
+        uint16                         *commands;
 }       tensorflow[2];
 
 static struct
@@ -608,6 +611,8 @@ void S9xUnmapAllControls (void)
 	for (int i = 0; i < 2; i++)
 	{
                 tensorflow[i].buttons = 0;
+                if (tensorflow[i].commands)
+                    free(tensorflow[i].commands);
 
 		mouse[i].old_x = mouse[i].old_y = 0;
 		mouse[i].cur_x = mouse[i].cur_y = 0;
@@ -731,6 +736,7 @@ void S9xSetController (int port, enum controllers controller, int8 id1, int8 id2
                                 break;
 
                         newcontrollers[port] = TENSORFLOW0 + id1;
+                        printf("Set TensorFlow Controller %i on port %u: %u\n",id1,port,newcontrollers[port]);
                         return;
 
 		default:
@@ -1067,16 +1073,16 @@ char * S9xGetCommandName (s9xcommand_t command)
                         s += command.button.tensorflow.idx + 1;
 
                         c = ' ';
-                        if (command.button.tensorflow.buttons & SNES_UP_MASK    )   { s += c; s += "Up";     c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_DOWN_MASK  )   { s += c; s += "Down";   c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_LEFT_MASK  )   { s += c; s += "Left";   c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_RIGHT_MASK )   { s += c; s += "Right";  c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_A_MASK     )   { s += c; s += "A";      c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_B_MASK     )   { s += c; s += "B";      c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_X_MASK     )   { s += c; s += "X";      c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_Y_MASK     )   { s += c; s += "Y";      c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_TL_MASK    )   { s += c; s += "L";      c = '+'; }
-                        if (command.button.tensorflow.buttons & SNES_TR_MASK    )   { s += c; s += "R";      c = '+'; }
+                        if (command.button.tensorflow.buttons & SNES_UP_MASK    )   { s += c; s += "UP";     c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_DOWN_MASK  )   { s += c; s += "DOWN";   c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_LEFT_MASK  )   { s += c; s += "LEFT";   c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_RIGHT_MASK )   { s += c; s += "RIGHT";  c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_A_MASK     )   { s += c; s += "A";      c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_B_MASK     )   { s += c; s += "B";      c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_X_MASK     )   { s += c; s += "X";      c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_Y_MASK     )   { s += c; s += "Y";      c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_TL_MASK    )   { s += c; s += "L";      c = ' '; }
+                        if (command.button.tensorflow.buttons & SNES_TR_MASK    )   { s += c; s += "R";      c = ' '; }
                         //if (command.button.tensorflow.buttons & SNES_START_MASK )   { s += c; s += "Start";  c = '+'; } // may be later
                         //if (command.button.tensorflow.buttons & SNES_SELECT_MASK)   { s += c; s += "Select"; c = '+'; } // may be later
 
@@ -1427,27 +1433,28 @@ s9xcommand_t S9xGetCommandT (const char *name)
         {
                 if (name[10] < '1' || name[10] > '2' || name[11] != ' ')
                         return (cmd);
-
                 cmd.button.tensorflow.idx = name[10] - '1';
                 s = name + 12;
                 i = 0;
 
-                if (!strncmp(s, "Up",     2))   { i |= SNES_UP_MASK;     s += 2; if (*s == '+') s++; }
-                if (!strncmp(s, "Down",   4))   { i |= SNES_DOWN_MASK;   s += 4; if (*s == '+') s++; }
-                if (!strncmp(s, "Left",   4))   { i |= SNES_LEFT_MASK;   s += 4; if (*s == '+') s++; }
-                if (!strncmp(s, "Right",  5))   { i |= SNES_RIGHT_MASK;  s += 5; if (*s == '+') s++; }
+                while(*s == ' ') s++;
 
-                if (*s == 'A')  { i |= SNES_A_MASK;  s++; if (*s == '+') s++; }
-                if (*s == 'B')  { i |= SNES_B_MASK;  s++; if (*s == '+') s++; }
-                if (*s == 'X')  { i |= SNES_X_MASK;  s++; if (*s == '+') s++; }
-                if (*s == 'Y')  { i |= SNES_Y_MASK;  s++; if (*s == '+') s++; }
-                if (*s == 'L')  { i |= SNES_TL_MASK; s++; if (*s == '+') s++; }
-                if (*s == 'R')  { i |= SNES_TR_MASK; s++; if (*s == '+') s++; }
+                if (!strncmp(s, "UP",     2))   { i |= SNES_UP_MASK;     s += 2; while(*s==' ') s++; }
+                if (!strncmp(s, "DOWN",   4))   { i |= SNES_DOWN_MASK;   s += 4; while(*s==' ') s++; }
+                if (!strncmp(s, "LEFT",   4))   { i |= SNES_LEFT_MASK;   s += 4; while(*s==' ') s++; }
+                if (!strncmp(s, "RIGHT",  5))   { i |= SNES_RIGHT_MASK;  s += 5; while(*s==' ') s++; }
 
-                //if (!strncmp(s, "Start",  5))   { i |= SNES_START_MASK;  s += 5; if (*s == '+') s++; }   // may be later
+                if (*s == 'A')  { i |= SNES_A_MASK;  s++; while(*s==' ') s++; }
+                if (*s == 'B')  { i |= SNES_B_MASK;  s++; while(*s==' ') s++; }
+                if (*s == 'X')  { i |= SNES_X_MASK;  s++; while(*s==' ') s++; }
+                if (*s == 'Y')  { i |= SNES_Y_MASK;  s++; while(*s==' ') s++; }
+                if (*s == 'L')  { i |= SNES_TL_MASK; s++; while(*s==' ') s++; }
+                if (*s == 'R')  { i |= SNES_TR_MASK; s++; while(*s==' ') s++; }
+
+                //if (!strncmp(s, "Start",  5))   { i |= SNES_START_MASK;  s += 5; while(*s==' ') s++; }   // may be later
                 //if (!strncmp(s, "Select", 6))   { i |= SNES_SELECT_MASK; s += 6; }                       // may be later
 
-                if (i == 0 || *s != 0 || *(s - 1) == '+')
+                if (i == 0)
                         return (cmd);
 
                 cmd.button.tensorflow.buttons = i;
@@ -3013,8 +3020,11 @@ static void UpdatePolledMouse (int i)
 
 void S9xSetJoypadLatch (bool latch)
 {
+        printf("S9xSetJoypadLatch %u\n",latch);
 	if (!latch && FLAG_LATCH)
 	{
+                printf("  new controllers : %u\n",newcontrollers[0]);
+
 		// 1 written, 'plug in' new controllers now
 		curcontrollers[0] = newcontrollers[0];
 		curcontrollers[1] = newcontrollers[1];
@@ -3026,6 +3036,7 @@ void S9xSetJoypadLatch (bool latch)
 
 		for (int n = 0; n < 2; n++)
 		{
+                        printf("  JoypadLatch for %i : type %u\n",n,curcontrollers[n]);
 			for (int j = 0; j < 2; j++)
 				read_idx[n][j] = 0;
 
@@ -3060,9 +3071,9 @@ void S9xSetJoypadLatch (bool latch)
                                         // We need to load buttons from file instead
 
                                         if (n==0)
-                                                 S9xReadTensorFlowCommand(1, S9xGetFilename(".tf1", SCREENSHOT_DIR));
+                                                 S9xReadTensorFlowCommand(1);
                                         else
-                                                 S9xReadTensorFlowCommand(2, S9xGetFilename(".tf2", SCREENSHOT_DIR));
+                                                 S9xReadTensorFlowCommand(2);
                                         break;
 
 				case MOUSE0:
@@ -3923,29 +3934,73 @@ void MovieSetJustifier (int i, uint8 in[11])
 	justifier.offscreen[1] = *ptr;
 }
 
-s9xcommand_t S9xReadTensorFlowCommand(const char *filename)
+void S9xNextTensorFlowCommand(uint32 id)
 {
-        FILE    *fs;
-        char     str[28];
+        if (tensorflow[id-1].commands && (tensorflow[id-1].currentcommand + 1 < tensorflow[id-1].maxcommands))
+        {
+            printf("Next TensorFlowCommand%u\n",id);
+            tensorflow[id-1].currentcommand += 1;
+        }
+}
+
+void S9xReadTensorFlowCommand(uint32 id)
+{
+        printf("Read TensorFlowCommand%u\n",id);
+        if (tensorflow[id-1].commands)
+        {
+            tensorflow[id-1].buttons = tensorflow[id-1].commands[tensorflow[id-1].currentcommand];
+            printf("Read TensorFlowCommand%u : %u\n",id,tensorflow[id-1].buttons);
+        }
+}
+
+#define COMMANDSCHUNK 50
+
+uint16 *S9xReadTensorFlowCommands(uint32 id, const char *filename)
+{
+        FILE   *fs;
+        uint16 *commands;
+        char    str[75];
+        uint16  currentcommand = 1;
 
         fs = fopen(filename, "r");
-        if (!fs)
-                return S9xGetCommandT("");
 
-        fgets(str, 28, fs);
+        commands = (uint16 *)malloc(COMMANDSCHUNK*sizeof(uint16));
+
+        printf("Load TensorFlowCommand%u\n",id);
+
+        sprintf(str,"TensorFlow%u ",id+1);
+
+        while(!feof(fs))
+        {
+            s9xcommand_t cmd;
+            fgets(str+12,50,fs);
+            str[strlen(str)-1]=0;
+            if (currentcommand%COMMANDSCHUNK == 0)
+               commands = (uint16 *)realloc(commands, (currentcommand+COMMANDSCHUNK)*sizeof(uint16));
+
+            printf("Read TensorFlowCommand%u : %s\n", id, str);
+            cmd = S9xGetCommandT(str);
+            printf("Read TensorFlowCommand%u : %s\n", id, S9xGetCommandName(cmd));
+            *(commands + currentcommand++) = cmd.button.tensorflow.buttons;
+
+            printf("Read TensorFlowCommand%u : %u\n",id,cmd.button.tensorflow.buttons);
+        }
+        
+        *commands = currentcommand;
 
         fclose(fs);
 
-        str[strlen(str)-1] = 0;
-
-        return S9xGetCommandT(str);
+        return commands;
 }
 
-void S9xReadTensorFlowCommand(uint32 id, const char *filename)
+void S9xInitTensorFlowCommands(uint32 id, const char *filename)
 {
-        s9xcommand_t    cmd;
+        uint16 *commands;
 
-        cmd = S9xReadTensorFlowCommand(filename);
+        commands = S9xReadTensorFlowCommands(id,filename);
 
-        MovieSetTensorFlow(id - 1, cmd.button.tensorflow.buttons);
+        tensorflow[id].buttons = commands[0];
+        tensorflow[id].currentcommand = 1;
+        tensorflow[id].maxcommands = *commands;
+        tensorflow[id].commands = commands;
 }

@@ -433,6 +433,13 @@ void S9xEndScreenRefresh (void)
 		}
 		else
 		{
+                        if (Settings.KillAfterXFrames)
+                        {
+                                IPPU.UnkilledFrames++;
+                                if (IPPU.UnkilledFrames == Settings.KillAfterXFrames)
+                                       Settings.KillAfterSnapshot = 1;
+                        }
+
                         if (Settings.AutoSnapshotRate && ++Settings.AutoSnapshotFrames==Settings.AutoSnapshotRate)
                         {
                                 Settings.TakeScreenshot = 1;

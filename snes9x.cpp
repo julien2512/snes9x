@@ -477,6 +477,15 @@ void S9xLoadConfigFiles (char **argv, int argc)
 	Settings.JustifierMaster            =  conf.GetBool("Controls::JustifierMaster",           true);
 	Settings.MultiPlayer5Master         =  conf.GetBool("Controls::MP5Master",                 true);
         Settings.TensorFlowMaster           =  conf.GetBool("Controls::TensorFlowMaster",          true);
+        Settings.TensorFlowCommandsFile1[0] = '\0';
+        if (conf.Exists("Controls::TensorFlowCommandsFile1"))
+                conf.GetString("Controls::TensorFlowCommandsFile1", Settings.TensorFlowCommandsFile1, PATH_MAX);
+        Settings.TensorFlowCommandsFile2[0] = '\0';
+        if (conf.Exists("Controls::TensorFlowCommandsFile2"))
+                conf.GetString("Controls::TensorFlowCommandsFile2", Settings.TensorFlowCommandsFile2, PATH_MAX);
+        Settings.TensorFlowRate             =  conf.GetUInt("Controls::TensorFlowRate",            1);
+        Settings.TensorFlowCurrent          =  0;
+
 	Settings.UpAndDown                  =  conf.GetBool("Controls::AllowLeftRight",            false);
 
 	if (conf.Exists("Controls::Port1"))
@@ -596,6 +605,8 @@ void S9xUsage (void)
         S9xMessage(S9X_INFO, S9X_USAGE, "-savestateattheendfilename      Final State Saving file name");
 	S9xMessage(S9X_INFO, S9X_USAGE, "-autosnapshotrate               Frame rate for saving auto snapshot images");
         S9xMessage(S9X_INFO, S9X_USAGE, "-killafterxframes               End Snes9x after X frames");
+        S9xMessage(S9X_INFO, S9X_USAGE, "-tensorflowcommandsfile1        Commands File for TensorFlow port 1");
+        S9xMessage(S9X_INFO, S9X_USAGE, "-tensorflowcommandsfile2        Commands File for TensorFlow port 2"); 
         S9xMessage(S9X_INFO, S9X_USAGE, "");
 
 	// PATCH/CHEAT OPTIONS
@@ -805,6 +816,41 @@ char * S9xParseArgs (char **argv, int argc)
                                 {
                                         strncpy(Settings.SaveStateAtTheEndFilename, argv[++i], PATH_MAX);
                                         Settings.SaveStateAtTheEndFilename[PATH_MAX] = 0;
+                                }
+                                else
+                                        S9xUsage();
+                        }
+                        else
+                        if (!strcasecmp(argv[i], "-tensorflowcommandsfile1"))
+                        {
+                                if (i + 1 < argc)
+                                {
+                                        strncpy(Settings.TensorFlowCommandsFile1, argv[++i], PATH_MAX);
+                                        Settings.TensorFlowCommandsFile1[PATH_MAX] = 0;
+                                        S9xInitTensorFlowCommands(0,(char *)&Settings.TensorFlowCommandsFile1);
+                                }
+                                else
+                                        S9xUsage();
+                        }
+                        else
+                        if (!strcasecmp(argv[i], "-tensorflowcommandsfile2"))
+                        {
+                                if (i + 1 < argc)
+                                {
+                                        strncpy(Settings.TensorFlowCommandsFile2, argv[++i], PATH_MAX);
+                                        Settings.TensorFlowCommandsFile2[PATH_MAX] = 0;
+                                        S9xInitTensorFlowCommands(1,(char *)&Settings.TensorFlowCommandsFile2);
+                                }
+                                else
+                                        S9xUsage();
+                        }
+                        else
+                        if (!strcasecmp(argv[i], "-tensorflowrate"))
+                        {
+                                if (i + 1 < argc)
+                                {
+                                        Settings.TensorFlowRate = atoi(argv[++i]);
+                                        Settings.TensorFlowCurrent = 0;
                                 }
                                 else
                                         S9xUsage();

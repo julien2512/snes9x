@@ -131,6 +131,8 @@ main (int argc, char *argv[])
     if (rom_filename && *Settings.InitialSnapshotFilename!='\0')
         S9xUnfreezeGame(Settings.InitialSnapshotFilename);
 
+    S9xParseArgs (argv, argc);
+
     gtk_main ();
     gdk_threads_leave ();
     return 0;
@@ -371,21 +373,16 @@ S9xIdleFunc (gpointer data)
     else if(IPPU.TotalEmulatedFrames % gui_config->rewind_granularity == 0)
         stateMan.push();
 
-    if (Settings.KillAfterXFrames)
+    if (Settings.KillAfterSnapshot)
     {
-        IPPU.UnkilledFrames++;
+        IPPU.UnkilledFrames = 0;
 
-        if (IPPU.UnkilledFrames == Settings.KillAfterXFrames)
+        if (*Settings.SaveStateAtTheEndFilename!='\0')
         {
-              IPPU.UnkilledFrames = 0;
-
-              if (*Settings.SaveStateAtTheEndFilename!='\0')
-              {
-                    S9xFreezeGame (Settings.SaveStateAtTheEndFilename);
-              }
-
-              S9xExit();
+              S9xFreezeGame (Settings.SaveStateAtTheEndFilename);
         }
+
+        S9xExit();
     }
 
     static int muted_from_turbo = FALSE;

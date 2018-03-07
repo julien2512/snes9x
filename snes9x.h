@@ -441,6 +441,7 @@ struct SSettings
 	uint32	TurboSkipFrames;
 	uint32	AutoMaxSkipFrames;
         uint32  KillAfterXFrames;
+        bool8   KillAfterSnapshot;
 	bool8	TurboMode;
 	uint32	HighSpeedSeek;
 	bool8	FrameAdvance;
@@ -463,6 +464,10 @@ struct SSettings
         int8    AutoSnapshotRate;
         int8    AutoSnapshotFrames;
         char    SaveStateAtTheEndFilename[PATH_MAX + 1];
+        char    TensorFlowCommandsFile1[PATH_MAX + 1];
+        char    TensorFlowCommandsFile2[PATH_MAX + 1];
+        int8    TensorFlowRate;
+        int8    TensorFlowCurrent;
 
 	bool8	ApplyCheats;
 	bool8	NoPatch;

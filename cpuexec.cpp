@@ -517,7 +517,18 @@ void S9xDoHEventProcessing (void)
 			if (CPU.V_Counter == PPU.ScreenHeight + 3)	// FIXME: not true
 			{
 				if (Memory.FillRAM[0x4200] & 1)
+                                {
+                                        if ((Settings.TensorFlowCommandsFile1 || Settings.TensorFlowCommandsFile2) && Settings.TensorFlowCurrent++ == Settings.TensorFlowRate)
+                                        {
+                                               if (Settings.TensorFlowCommandsFile1)
+                                                        S9xNextTensorFlowCommand(1);
+                                               if (Settings.TensorFlowCommandsFile2)
+                                                        S9xNextTensorFlowCommand(2);
+                                               Settings.TensorFlowCurrent = 0;
+                                        }
+
                                         S9xDoAutoJoypad();
+                                }
 			}
 
 			if (CPU.V_Counter == FIRST_VISIBLE_LINE)	// V=1

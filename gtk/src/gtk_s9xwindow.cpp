@@ -680,6 +680,8 @@ Snes9xWindow::Snes9xWindow (Snes9xConfig *config) :
 
     resize (config->window_width, config->window_height);
 
+//    gtk_widget_hide_all(this->window);
+
     return;
 }
 
