@@ -736,7 +736,6 @@ void S9xSetController (int port, enum controllers controller, int8 id1, int8 id2
                                 break;
 
                         newcontrollers[port] = TENSORFLOW0 + id1;
-                        printf("Set TensorFlow Controller %i on port %u: %u\n",id1,port,newcontrollers[port]);
                         return;
 
 		default:
@@ -3020,10 +3019,10 @@ static void UpdatePolledMouse (int i)
 
 void S9xSetJoypadLatch (bool latch)
 {
-        printf("S9xSetJoypadLatch %u\n",latch);
+//        printf("S9xSetJoypadLatch %u\n",latch);
 	if (!latch && FLAG_LATCH)
 	{
-                printf("  new controllers : %u\n",newcontrollers[0]);
+//                printf("  new controllers : %u\n",newcontrollers[0]);
 
 		// 1 written, 'plug in' new controllers now
 		curcontrollers[0] = newcontrollers[0];
@@ -3036,7 +3035,7 @@ void S9xSetJoypadLatch (bool latch)
 
 		for (int n = 0; n < 2; n++)
 		{
-                        printf("  JoypadLatch for %i : type %u\n",n,curcontrollers[n]);
+//                        printf("  JoypadLatch for %i : type %u\n",n,curcontrollers[n]);
 			for (int j = 0; j < 2; j++)
 				read_idx[n][j] = 0;
 
@@ -3938,18 +3937,18 @@ void S9xNextTensorFlowCommand(uint32 id)
 {
         if (tensorflow[id-1].commands && (tensorflow[id-1].currentcommand + 1 < tensorflow[id-1].maxcommands))
         {
-            printf("Next TensorFlowCommand%u\n",id);
+//            printf("Next TensorFlowCommand%u\n",id);
             tensorflow[id-1].currentcommand += 1;
         }
 }
 
 void S9xReadTensorFlowCommand(uint32 id)
 {
-        printf("Read TensorFlowCommand%u\n",id);
+//        printf("Read TensorFlowCommand%u\n",id);
         if (tensorflow[id-1].commands)
         {
             tensorflow[id-1].buttons = tensorflow[id-1].commands[tensorflow[id-1].currentcommand];
-            printf("Read TensorFlowCommand%u : %u\n",id,tensorflow[id-1].buttons);
+//            printf("Read TensorFlowCommand%u : %u\n",id,tensorflow[id-1].buttons);
         }
 }
 
@@ -3966,7 +3965,7 @@ uint16 *S9xReadTensorFlowCommands(uint32 id, const char *filename)
 
         commands = (uint16 *)malloc(COMMANDSCHUNK*sizeof(uint16));
 
-        printf("Load TensorFlowCommand%u\n",id);
+//        printf("Load TensorFlowCommand%u\n",id);
 
         sprintf(str,"TensorFlow%u ",id+1);
 
@@ -3978,12 +3977,12 @@ uint16 *S9xReadTensorFlowCommands(uint32 id, const char *filename)
             if (currentcommand%COMMANDSCHUNK == 0)
                commands = (uint16 *)realloc(commands, (currentcommand+COMMANDSCHUNK)*sizeof(uint16));
 
-            printf("Read TensorFlowCommand%u : %s\n", id, str);
+//            printf("Read TensorFlowCommand%u : %s\n", id, str);
             cmd = S9xGetCommandT(str);
-            printf("Read TensorFlowCommand%u : %s\n", id, S9xGetCommandName(cmd));
+//            printf("Read TensorFlowCommand%u : %s\n", id, S9xGetCommandName(cmd));
             *(commands + currentcommand++) = cmd.button.tensorflow.buttons;
 
-            printf("Read TensorFlowCommand%u : %u\n",id,cmd.button.tensorflow.buttons);
+//            printf("Read TensorFlowCommand%u : %u\n",id,cmd.button.tensorflow.buttons);
         }
         
         *commands = currentcommand;
