@@ -447,6 +447,16 @@ void S9xEndScreenRefresh (void)
                                 Settings.AutoSnapshotFrames = 0;
                         }
 
+//                      It is more convenient to do command refresh in sync with screenshots
+                        if ((Settings.TensorFlowCommandsFile1 || Settings.TensorFlowCommandsFile2) && Settings.TensorFlowCurrent++ == Settings.TensorFlowRate)
+                        {
+                                if (Settings.TensorFlowCommandsFile1)
+                                       S9xNextTensorFlowCommand(1);
+                                if (Settings.TensorFlowCommandsFile2)
+                                       S9xNextTensorFlowCommand(2);
+                                Settings.TensorFlowCurrent = 0;
+                        }
+
 			if (IPPU.ColorsChanged)
 			{
 				uint32 saved = PPU.CGDATA[0];
